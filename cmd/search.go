@@ -20,12 +20,16 @@ var searchCmd = &cobra.Command{
 			color.Red("Search term not provided")
 			os.Exit(1)
 		}
-
-		allTags, _ := cmd.Flags().GetBool("all")
-		registryName, _ := cmd.Flags().GetString("registry")
 		searchTerm := args[0]
 
-		imagesSrc := search.SearchImage(searchTerm, registryName, allTags)
+		registryUrl, _ := cmd.Flags().GetString("registry")
+		if len(registryUrl) < 1 {
+			color.Red("Registry URL is required")
+			os.Exit(1)
+		}
+
+		useHttps, _ := cmd.Flags().GetBool("https")
+		imagesSrc := search.SearchImage(searchTerm, registryUrl, useHttps)
 		var images []string
 		for _, img := range imagesSrc {
 			images = append(images, img.Refs...)
@@ -67,4 +71,7 @@ var searchCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(searchCmd)
+
+	searchCmd.PersistentFlags().StringP("registry", "r", "", "Registry url")
+	searchCmd.PersistentFlags().Bool("https", false, "Use HTTPS instead of HTTP")
 }

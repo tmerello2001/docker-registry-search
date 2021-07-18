@@ -32,19 +32,21 @@ func queryRegistry(url string, target interface{}) error {
 	return json.NewDecoder(r.Body).Decode(target)
 }
 
-func SearchImage(searchTerm string, registry string, allTags bool) []DockerImage {
+func SearchImage(searchTerm string, registryUrl string, useHttps bool) []DockerImage {
+	baseUrl := fmt.Sprintf("http://%s", registryUrl)
+	if useHttps {
+		baseUrl = fmt.Sprintf("https://%s", registryUrl)
+	}
+
 	var foundImages []DockerImage
 
-	registryUrl := "docker.jampp.com"
-	// registryUrl := "127.0.0.1:5000"
-
 	var repositories DockerRepoList
-	queryRegistry(fmt.Sprintf("https://%s/v2/_catalog", registryUrl), &repositories)
+	queryRegistry(fmt.Sprintf("%s/v2/_catalog", baseUrl), &repositories)
 
 	for _, repo := range repositories.Repositories {
 		if strings.Contains(repo, searchTerm) {
 			var image DockerImage
-			queryRegistry(fmt.Sprintf("https://%s/v2/%s/tags/list", registryUrl, repo),
+			queryRegistry(fmt.Sprintf("%s/v2/%s/tags/list", baseUrl, repo),
 				&image)
 
 			for _, tag := range image.Tags {
