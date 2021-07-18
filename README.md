@@ -2,11 +2,10 @@
 
 ```bash
 $ ./install.sh
-$ docker-registry-search search <term>
+$ docker-registry-search search --registry registry.example.com [--https] <term>
 ```
 
-
+### Create alias
 ```bash
-$ ./install.sh --short
-$ drs search <term>
+alias drs="docker-registry-search search --registry registry.example.com --https \"$@\""
 ```
