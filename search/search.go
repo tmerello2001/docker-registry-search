@@ -41,7 +41,7 @@ func SearchImage(searchTerm string, registryUrl string, useHttps bool) []DockerI
 	var foundImages []DockerImage
 
 	var repositories DockerRepoList
-	queryRegistry(fmt.Sprintf("%s/v2/_catalog", baseUrl), &repositories)
+	queryRegistry(fmt.Sprintf("%s/v2/_catalog?n=1000", baseUrl), &repositories)
 
 	for _, repo := range repositories.Repositories {
 		if strings.Contains(repo, searchTerm) {
